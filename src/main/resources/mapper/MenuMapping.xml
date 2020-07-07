@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.MenuMapping">
+    <resultMap id="MenuList" type="com.example.demo.bean.Menu">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="path" column="path"/>
+        <collection property="sList" ofType="com.example.demo.bean.SubMenu">
+            <result property="id" column="subid"/>
+            <result property="title" column="subtitle"/>
+            <result property="path" column="subpath"/>
+        </collection>
+    </resultMap>
+    <select id="getMenuList" resultMap="MenuList">
+        select t1.id as id, t1.title as title, t1.path as path, tsn.id as subid, tsn.title as subtitle, tsn.path as subpath from t_navmenu t1 join t_sub_navmenu tsn on t1.id = tsn.subid
+    </select>
+</mapper>
