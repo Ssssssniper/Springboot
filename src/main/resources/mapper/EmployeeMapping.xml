@@ -17,6 +17,6 @@
         </association>
     </resultMap>
     <select id="getAll" resultMap="employee">
-        select * from t_crm_customer join t_department td on t_crm_customer.depart_id = td.depart_id
+        select id,id, name, gender, age, tel, email, depart_name from t_crm_customer join t_department td on t_crm_customer.depart_id = td.depart_id
     </select>
 </mapper>

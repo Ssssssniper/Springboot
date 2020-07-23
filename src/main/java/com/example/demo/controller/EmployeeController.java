@@ -2,10 +2,12 @@ package com.example.demo.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.example.demo.bean.Employee;
+import com.example.demo.common.Msg;
 import com.example.demo.dao.EmployeeMapping;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,19 +19,14 @@ public class EmployeeController {
     EmployeeMapping employeeMapping;
 
     @RequestMapping("/emps")
-    public String getEmp(){
+    @ResponseBody
+    public Msg getEmp(@RequestParam(value = "pn",defaultValue = "1") Integer pn){
+        PageHelper.startPage(pn,10);
         List<Employee> all = employeeMapping.getAll();
-        System.out.println("login");
-        HashMap<String, Object> res = new HashMap<>();
-        if (all!=null){
-            res.put("code", "200");
-            res.put("status", "success");
-            res.put("data", all);
-        }else{
-            res.put("code", "400");
-            res.put("status", "failed");
-        }
-        String s = JSON.toJSONString(res);
-        return s;
+        PageInfo page = new PageInfo(all,5);
+        System.out.println("用户信息获取："+page);
+        return Msg.success().add("data", page);
+
+
     }
 }
