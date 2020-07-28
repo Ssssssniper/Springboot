@@ -26,7 +26,25 @@ public class EmployeeController {
         PageInfo page = new PageInfo(all,5);
         System.out.println("用户信息获取："+page);
         return Msg.success().add("data", page);
+    }
 
+    /**
+     * 根据姓名和部门进行查询
+     * @return
+     */
+    @PostMapping(value = {"/queryemps/{name}/{gender}","/queryemps/{name}"})
+    @ResponseBody
+    public Msg querEmp(@PathVariable(required = true) String name,@PathVariable(required = false) String gender){
+        PageHelper.startPage(1, 10);
+        List<Employee> employees = employeeMapping.selectBycondition(name,gender);
+        PageInfo page = new PageInfo(employees, 5);
+        System.out.println("条件："+name+"部门："+gender+"查询结果："+page);
+        return Msg.success().add("data", page);
+}
 
+    @RequestMapping("/addemps")
+    @ResponseBody
+    public Msg addEmp(@RequestBody Employee employee){
+        return Msg.success();
     }
 }

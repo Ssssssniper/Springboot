@@ -17,6 +17,10 @@
         </association>
     </resultMap>
     <select id="getAll" resultMap="employee">
-        select id,id, name, gender, age, tel, email, depart_name from t_crm_customer join t_department td on t_crm_customer.depart_id = td.depart_id
+        select id, name, gender, age, tel, email, depart_name from t_crm_customer join t_department td on t_crm_customer.depart_id = td.depart_id
+    </select>
+
+    <select id="selectBycondition" resultMap="employee">
+        select id, gender, age, tel, email,depart_name from (select * from t_crm_customer where t_crm_customer.name = #{name} and t_crm_customer.gender = #{gender}) t join t_department on t.depart_id = t_department.depart_id
     </select>
 </mapper>
