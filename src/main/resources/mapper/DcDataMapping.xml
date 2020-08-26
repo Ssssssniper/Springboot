@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.DcDataMapping">
+    <resultMap id="DcdataList" type="com.example.demo.bean.Dcdata">
+        <result property="dcname" column="FEQUNAME"/>
+        <result property="startTime" column="FSTARTTIME"/>
+        <result property="freq" column="FCYCLE"/>
+        <result property="direction" column="FTYPENO"/>
+        <collection property="dcList" ofType="com.example.demo.bean.Dc">
+            <result property="typeNum" column="FPARTNAME"/>
+            <result property="value" column="FVALUE"/>
+        </collection>
+    </resultMap>
+
+<!--  按10结构 查道岔名  -->
+    <select id="get10All" resultMap="DcdataList">
+        SELECT T1.FEQUNAME, T1.FPARTNAME, T2.FSTARTTIME, T2.FCYCLE, T2.FVALUE, T2.FTYPENO from t_app_mulrealvalue as T2 INNER JOIN
+        (SELECT FNUMBER, FPARTNAME, t_sys_equ.FEQUNAME FROM `t_sys_mnlconfig` INNER JOIN `t_sys_equ` ON t_sys_mnlconfig.FEQUNO = t_sys_equ.FNO  where fitemno=10 and FPARTNAME != '-GL') as T1
+         on T1.FNUMBER = T2.FNUMBER
+    </select>
+    <select id="get18All" resultMap="DcdataList">
+
+    </select>
+<!--  条件查询  按道岔名查库，展示  -->
+    <select id="selectByName" resultMap="DcdataList">
+        SELECT T1.FEQUNAME, T1.FPARTNAME, T2.FSTARTTIME, T2.FCYCLE, T2.FVALUE, T2.FTYPENO from t_app_mulrealvalue as T2 INNER JOIN
+        (SELECT FNUMBER, FPARTNAME, t_sys_equ.FEQUNAME FROM `t_sys_mnlconfig` INNER JOIN `t_sys_equ` ON t_sys_mnlconfig.FEQUNO = t_sys_equ.FNO  where fitemno=10 and FPARTNAME != '-GL') as T1
+         on T1.FNUMBER = T2.FNUMBER where FEQUNAME = #{dcname}
+    </select>
+</mapper>
