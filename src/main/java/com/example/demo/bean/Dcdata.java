@@ -1,12 +1,14 @@
 package com.example.demo.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.List;
 
 public class Dcdata {
     private String dcname;      // 道岔名
     private String startTime;       // 动作时间
     private Integer freq;           // 采集频率
-    private Integer direction;      // 动作方向
+    private String direction;      // 动作方向
     private List<Dc> dcList;        // 道岔数据实体
 
     public Dcdata() {
@@ -43,11 +45,11 @@ public class Dcdata {
         this.freq = freq;
     }
 
-    public Integer getDirection() {
+    public String getDirection() {
         return direction;
     }
 
-    public void setDirection(Integer direction) {
+    public void setDirection(String direction) {
         this.direction = direction;
     }
 

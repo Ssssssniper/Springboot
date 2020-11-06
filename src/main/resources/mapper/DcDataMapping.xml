@@ -10,23 +10,81 @@
         <result property="direction" column="FTYPENO"/>
         <collection property="dcList" ofType="com.example.demo.bean.Dc">
             <result property="typeNum" column="FPARTNAME"/>
+<!--            <result property="value" column="FVALUE"/>-->
+        </collection>
+    </resultMap>
+    <!--   道岔曲线   -->
+    <resultMap id="Dcdata" type="com.example.demo.bean.Dcdata">
+        <result property="dcname" column="FEQUNAME"/>
+        <result property="startTime" column="FSTARTTIME"/>
+        <result property="freq" column="FCYCLE"/>
+        <result property="direction" column="FTYPENO"/>
+        <collection property="dcList" ofType="com.example.demo.bean.Dc">
+            <result property="typeNum" column="FPARTNAME"/>
             <result property="value" column="FVALUE"/>
         </collection>
     </resultMap>
 
 <!--  按10结构 查道岔名  -->
-    <select id="get10All" resultMap="DcdataList">
-        SELECT T1.FEQUNAME, T1.FPARTNAME, T2.FSTARTTIME, T2.FCYCLE, T2.FVALUE, T2.FTYPENO from t_app_mulrealvalue as T2 INNER JOIN
-        (SELECT FNUMBER, FPARTNAME, t_sys_equ.FEQUNAME FROM `t_sys_mnlconfig` INNER JOIN `t_sys_equ` ON t_sys_mnlconfig.FEQUNO = t_sys_equ.FNO  where fitemno=10 and FPARTNAME != '-GL') as T1
-         on T1.FNUMBER = T2.FNUMBER
+    <select id="get10dcname" resultType="string">
+        SELECT DISTINCT t_sys_equ.FEQUNAME FROM `t_sys_mnlconfig` INNER JOIN `t_sys_equ` ON t_sys_mnlconfig.FEQUNO = t_sys_equ.FNO  where fitemno=10 and FPARTNAME != '-GL' and FEQUNAME != 'DUMMY'
     </select>
     <select id="get18All" resultMap="DcdataList">
 
     </select>
-<!--  条件查询  按道岔名查库，展示  -->
+<!--  条件查询  按道岔名查库，时间去重将三相电流整合成一条 展示   -->
     <select id="selectByName" resultMap="DcdataList">
-        SELECT T1.FEQUNAME, T1.FPARTNAME, T2.FSTARTTIME, T2.FCYCLE, T2.FVALUE, T2.FTYPENO from t_app_mulrealvalue as T2 INNER JOIN
+        SELECT T1.FEQUNAME, T2.FSTARTTIME,
+        CASE T2.FTYPENO
+        WHEN  0 THEN
+            '定-反'
+        WHEN 1 THEN
+            '反-定'
+        WHEN  2 THEN
+            '定-定'
+        WHEN  3 THEN
+            '反-反'
+        WHEN  4 THEN
+            '定-故障'
+        WHEN  5 THEN
+            '反-故障'
+        WHEN 6 THEN
+            '故障-定'
+        WHEN  7 THEN
+            '故障-反'
+        ELSE
+            '故障-故障'
+        END as FTYPENO
+        from t_app_mulrealvalue as T2 INNER JOIN
         (SELECT FNUMBER, FPARTNAME, t_sys_equ.FEQUNAME FROM `t_sys_mnlconfig` INNER JOIN `t_sys_equ` ON t_sys_mnlconfig.FEQUNO = t_sys_equ.FNO  where fitemno=10 and FPARTNAME != '-GL') as T1
-         on T1.FNUMBER = T2.FNUMBER where FEQUNAME = #{dcname}
+         on T1.FNUMBER = T2.FNUMBER where FEQUNAME = #{dcname} GROUP BY FSTARTTIME ORDER BY FSTARTTIME
+    </select>
+
+    <!--  查该道岔该时间的数据  （A\B\C三相）  -->
+    <select id="getDcdata" resultMap="Dcdata">
+        SELECT T1.FEQUNAME, T1.FPARTNAME, T2.FSTARTTIME, T2.FCYCLE,T2.FVALUE,
+        CASE T2.FTYPENO
+        WHEN  0 THEN
+            '定-反'
+        WHEN 1 THEN
+            '反-定'
+        WHEN  2 THEN
+            '定-定'
+        WHEN  3 THEN
+            '反-反'
+        WHEN  4 THEN
+            '定-故障'
+        WHEN  5 THEN
+            '反-故障'
+        WHEN 6 THEN
+            '故障-定'
+        WHEN  7 THEN
+            '故障-反'
+        ELSE
+            '故障-故障'
+        END as FTYPENO
+        from t_app_mulrealvalue as T2 INNER JOIN
+        (SELECT FNUMBER, FPARTNAME, t_sys_equ.FEQUNAME FROM `t_sys_mnlconfig` INNER JOIN `t_sys_equ` ON t_sys_mnlconfig.FEQUNO = t_sys_equ.FNO  where fitemno=10 and FPARTNAME != '-GL') as T1
+         on T1.FNUMBER = T2.FNUMBER where FEQUNAME = #{dcname} AND FSTARTTIME = #{time} AND FTYPENO = #{typeno}
     </select>
 </mapper>

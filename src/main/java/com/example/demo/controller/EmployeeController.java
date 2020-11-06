@@ -18,7 +18,8 @@ public class EmployeeController {
     @Autowired
     EmployeeMapping employeeMapping;
 
-    @RequestMapping("/emps")
+//    @RequestMapping("/emps")
+    @GetMapping("/emps")
     @ResponseBody
     public Msg getEmp(@RequestParam(value = "pn",defaultValue = "1") Integer pn){
         PageHelper.startPage(pn,10);
@@ -38,11 +39,12 @@ public class EmployeeController {
         PageHelper.startPage(1, 10);
         List<Employee> employees = employeeMapping.selectBycondition(name,gender);
         PageInfo page = new PageInfo(employees, 5);
-        System.out.println("条件："+name+"部门："+gender+"查询结果："+page);
+        System.out.println("条件："+name+"性别："+gender+"查询结果："+page);
         return Msg.success().add("data", page);
 }
 
-    @RequestMapping("/addemps")
+//    @RequestMapping("/addemps")
+    @PostMapping("/addemps")
     @ResponseBody
     public Msg addEmp(@RequestBody Employee employee){
         return Msg.success();

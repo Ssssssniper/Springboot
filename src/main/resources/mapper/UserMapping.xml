@@ -8,10 +8,26 @@
         <result property="role" column="role"/>
         <result property="status" column="status"/>
     </resultMap>
+
+<!--  登录控制  -->
     <select id="getUserByMessage" resultMap="user">        <!-- 参数获取是通过接口的@Param来获取 -->
         select * from t_user where username = #{username} and password = #{password} and status=1
     </select>
-<!--    <select id="getUserByName" resultMap="user">-->
-<!--        select * from t_user where username = #{username}-->
-<!--    </select>-->
+
+<!--  获取  -->
+    <select id="getAll" resultMap="user">
+        select * from t_user
+    </select>
+
+<!--   新增  -->
+    <insert id="addUser" parameterType="com.example.demo.bean.User" useGeneratedKeys="true" keyProperty="id">
+        insert into t_user(username, password, role, status) value (#{username},#{password},#{role},#{status});
+    </insert>
+
+<!--  真删除  -->
+    <delete id="delUser" parameterType="com.example.demo.bean.User">
+        delete from t_user where username=#{username} and password=#{password} and role=#{role}
+    </delete>
+
+<!--  逻辑删除  -->
 </mapper>
